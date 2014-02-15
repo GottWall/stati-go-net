@@ -29,18 +29,18 @@ To use library in your packages import it first.
    package your_package_name
 
    import (
-	   "github.com/GottWall/stati-go-net"
-	   )
+      "github.com/GottWall/stati-go-net"
+   )
 
    var (
-		solt_base   int    = DEFAULT_SOLT_BASE
-		project     string = "test_project"
-		private_key string = "private_key"
-		public_key  string = "public_key"
-		host string = "127.0.0.1"
-		port int16 = 8890
-		proto string = "https"
-		prefix string = "/custom_prefix"
+       solt_base int    = DEFAULT_SOLT_BASE
+       project string = "test_project"
+       private_key string = "private_key"
+       public_key  string = "public_key"
+       host string = "127.0.0.1"
+       port int16 = 8890
+       proto string = "https"
+       prefix string = "/custom_prefix"
 	)
 
 
@@ -63,7 +63,7 @@ HTTPClient
 TCP/IP Client
 ^^^^^^^^^^^^^
 
-.. sourcecode:: golang
+.. sourcecode:: go
 
    // TCP/IP Client
    // stati_net package already imported
@@ -81,7 +81,7 @@ TCP/IP Client
 UDP Client
 ^^^^^^^^^^
 
-.. sourcecode:: golang
+.. sourcecode:: go
 
    # UDP client
    // stati_net package already imported
