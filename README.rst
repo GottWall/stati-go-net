@@ -24,7 +24,7 @@ USAGE
 
 To use library in your packages import it first.
 
-.. sourcecode:: golang
+.. sourcecode:: go
 
    package your_package_name
 
