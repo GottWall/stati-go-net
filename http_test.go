@@ -2,15 +2,17 @@ package stati_net
 
 import (
 	"fmt"
+	"net"
+	"net/http"
+	"net/http/httptest"
 	"runtime"
 	"testing"
-	"time"
 )
 
 var (
 	host   string = "127.0.0.1"
 	port   int16  = 8890
-	proto  string = "https"
+	proto  string = "http"
 	prefix string = "/custom_prefix"
 )
 
@@ -51,8 +53,48 @@ func TestUserAgent(t *testing.T) {
 	}
 }
 
+// Debug server for listen testing host ans port
+func newLocalListener(host string, port int16) net.Listener {
+	var serve string = fmt.Sprintf("%s:%d", host, port)
+	l, err := net.Listen("tcp", serve)
+
+	if err != nil {
+		panic(fmt.Sprintf("httptest: failed to listen on %v: %v", serve, err))
+	}
+	return l
+}
+
+func NewTestHttpServer(handler http.Handler) *httptest.Server {
+	ts := NewUnstartedServer(handler)
+	ts.Start()
+	return ts
+}
+
+func NewUnstartedServer(handler http.Handler) *httptest.Server {
+	return &httptest.Server{
+		Listener: newLocalListener(host, port),
+		Config:   &http.Server{Handler: handler},
+	}
+}
+
 func TestRequest(t *testing.T) {
-	if http_client.Request("incr", "test_name", 10.0, time.Now().UTC().Unix(), nil) != true {
+
+	ts := NewTestHttpServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintln(w, "OK")
+	}))
+
+	defer ts.Close()
+	if http_client.Request("incr", "test_name", 10.0, http_client.CurrentTS(), nil) != true {
 		t.Fatalf("Invalid request")
 	}
+	ts.Close()
+}
+
+func TestInvalidRequest(t *testing.T) {
+	ts := NewTestHttpServer(http.HandlerFunc(http.NotFound))
+	defer ts.Close()
+	if http_client.Request("incr", "test_name", 10.0, http_client.CurrentTS(), nil) != false {
+		t.Fatalf("Invalid request")
+	}
+	ts.Close()
 }
