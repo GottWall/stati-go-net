@@ -28,8 +28,11 @@ type HTTPClient struct {
 // Construct HTTPClient instance
 func HTTPClientInit(project string, private_key string, public_key string, host string, port int16, proto string, prefix string) *HTTPClient {
 
-	prefix = strings.TrimPrefix(prefix, "/")
 	prefix = strings.TrimSuffix(prefix, "/")
+
+	if prefix != "" && !strings.HasPrefix(prefix, "/") {
+		prefix = "/" + prefix
+	}
 
 	client := &HTTPClient{
 		Client: Client{
@@ -55,7 +58,7 @@ func (c *HTTPClient) SetUpClient() {
 
 // Construct API url
 func (c *HTTPClient) GetUrl(action string) string {
-	return fmt.Sprintf("%s://%s:%d/%s/api/v1/%s/%s",
+	return fmt.Sprintf("%s://%s:%d%s/api/v1/%s/%s",
 		c.Proto, c.Host, c.Port, c.Prefix, c.GetProjectHash(), action)
 }
 
@@ -96,6 +99,7 @@ func (c *HTTPClient) Request(action string, name string, value float64, timestam
 	}
 	req.Header.Add("Content-Type", `application/json`)
 	req.Header.Add("User-Agent", c.GetUserAgent())
+	req.Header.Add("X-GottWall-Auth", c.GetAuthHeader())
 
 	resp, err := c.RequestClient.Do(req)
 	if err != nil || resp.StatusCode != 200 {

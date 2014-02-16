@@ -13,13 +13,17 @@ var (
 	host   string = "127.0.0.1"
 	port   int16  = 8890
 	proto  string = "http"
-	prefix string = "/custom_prefix"
+	prefix string = "/custom_prefix/"
 )
 
 var http_client *HTTPClient = HTTPClientInit(
 	project, private_key, public_key, host, port, proto, prefix)
 
 func TestHttpClient(t *testing.T) {
+
+	if http_client.Prefix != "/custom_prefix" {
+		t.Fatalf("Wrong prefix processing")
+	}
 
 	if http_client.SoltBase != DEFAULT_SOLT_BASE {
 		t.Fatalf("Wrong solt base")

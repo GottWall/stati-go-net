@@ -53,7 +53,7 @@ HTTPClient
    // stati_net package already imported
    func main() {
 
-   var client *HTTPClient = HTTPClientInit(
+   var client *stati_net.HTTPClient = stati_net.HTTPClientInit(
       project, private_key, public_key, host, port, proto, prefix)
 
    client.Incr("name", 10, 1392454739)
@@ -69,7 +69,7 @@ TCP/IP Client
    // stati_net package already imported
 
    func main() {
-      var client *TCPClient = TCPClientInit(
+      var client *stati_net.TCPClient = stati_net.TCPClientInit(
          project, private_key, public_key, host, port,
 	     auth_delimiter, chunk_delimiter)
 
@@ -87,7 +87,7 @@ UDP Client
    // stati_net package already imported
 
    func main() {
-      var client *UDPClient = UDPClientInit(
+      var client *stati_net.UDPClient = stati_net.UDPClientInit(
          project, private_key, public_key, host, port,
 		 auth_delimiter, chunk_delimiter)
 
