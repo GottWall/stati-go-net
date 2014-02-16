@@ -44,8 +44,13 @@ func HTTPClientInit(project string, private_key string, public_key string, host 
 		Proto:         proto,
 		RequestClient: &http.Client{},
 	}
+	client.SetUpClient()
 	client.SetUserAgent(client.GetDefaultUserAgent())
 	return client
+}
+
+func (c *HTTPClient) SetUpClient() {
+	c.RequestClient = &http.Client{Transport: &http.Transport{DisableCompression: true}}
 }
 
 // Construct API url
@@ -86,12 +91,16 @@ func (c *HTTPClient) Request(action string, name string, value float64, timestam
 
 	req, err := http.NewRequest("POST", c.GetUrl(action), bytes.NewReader(*serialized_message))
 	if err != nil {
+		fmt.Println(err)
 		return false
 	}
 	req.Header.Add("Content-Type", `application/json`)
 	req.Header.Add("User-Agent", c.GetUserAgent())
 
-	// TODO: check response data
-	c.RequestClient.Do(req)
+	resp, err := c.RequestClient.Do(req)
+	if err != nil || resp.StatusCode != 200 {
+		return false
+	}
+
 	return true
 }

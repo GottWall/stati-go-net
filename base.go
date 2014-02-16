@@ -82,3 +82,8 @@ func (c *Client) SerializeMessage(message *Message) (*[]byte, error) {
 	}
 	return &serialized_message, nil
 }
+
+// Get current time as seconds int UTC
+func (c *Client) CurrentTS() int64 {
+	return time.Now().UTC().Unix()
+}

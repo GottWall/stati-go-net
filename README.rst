@@ -47,7 +47,7 @@ To use library in your packages import it first.
 HTTPClient
 ^^^^^^^^^^
 
-.. sourcecode:: golang
+.. sourcecode:: go
 
    // HTTPClient
    // stati_net package already imported
@@ -83,7 +83,7 @@ UDP Client
 
 .. sourcecode:: go
 
-   # UDP client
+   // UDP client
    // stati_net package already imported
 
    func main() {
