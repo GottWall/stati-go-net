@@ -3,22 +3,11 @@ package stati_net
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
+	"github.com/Lispython/go-semver"
 	"time"
 )
 
-type Version struct {
-	Major int16
-	Minor int16
-	Patch int16
-}
-
-// Convert version to string representation
-func (v *Version) ToString() string {
-	return fmt.Sprintf("%d.%d.%d", v.Major, v.Minor, v.Patch)
-}
-
-var VERSION *Version = &Version{0, 1, 0}
+var VERSION *semver.Version = &semver.Version{0, 1, 0}
 
 const (
 	DEFAULT_SOLT_BASE int = 1000
@@ -36,6 +25,9 @@ type Client struct {
 	PublicKey  string
 	Project    string // project name
 	SoltBase   int    // GottWall auth header solt base
+	Host       string // GottWall backend host
+	Port       int16  // GottWall backend port
+	Addr       string // Concatenated ip:port string
 }
 
 // Metric message structure
