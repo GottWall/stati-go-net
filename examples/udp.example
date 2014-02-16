@@ -1,0 +1,28 @@
+package main
+
+import (
+	"fmt"
+	"github.com/GottWall/stati-go-net"
+	"os"
+)
+
+var (
+	private_key string = "secret_key"
+	public_key  string = "public_key"
+	project     string = "test_project"
+	port        int16  = 8898
+	prefix      string = ""
+	host        string = "127.0.0.1"
+	proto       string = "http"
+)
+
+func main() {
+
+	var client *stati_net.UDPClient = stati_net.UDPClientInit(project, private_key, public_key, host, port,
+		stati_net.DEFAULT_UDP_AUTH_DELIMITER, stati_net.DEFAULT_UDP_CHUNK_DELIMITER)
+
+	for i := range make([]struct{}, 10) {
+		fmt.Println(client.Incr("test_name", 10.0+float64(i), client.CurrentTS(), nil))
+	}
+	os.Exit(1)
+}

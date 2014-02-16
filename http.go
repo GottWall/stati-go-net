@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"runtime"
+	"strconv"
 	"strings"
 )
 
@@ -16,11 +17,9 @@ const (
 )
 
 type HTTPClient struct {
-	Client               // Base client
+	*Client              // Base client
 	Prefix        string // GottWall api prefix
-	Port          int16  // GottWall backend port
 	Proto         string // http/https protocol
-	Host          string
 	RequestClient *http.Client
 	UserAgent     string // Request user agent
 }
@@ -35,14 +34,18 @@ func HTTPClientInit(project string, private_key string, public_key string, host 
 	}
 
 	client := &HTTPClient{
-		Client: Client{
+		Client: &Client{
 			Project:    project,
 			PrivateKey: private_key,
 			PublicKey:  public_key,
-			SoltBase:   DEFAULT_SOLT_BASE,
+
+			Host: host,
+			Port: port,
+
+			SoltBase: DEFAULT_SOLT_BASE,
+
+			Addr: strings.Join([]string{host, strconv.FormatInt(int64(port), 10)}, ":"),
 		},
-		Host:          host,
-		Port:          port,
 		Prefix:        prefix,
 		Proto:         proto,
 		RequestClient: &http.Client{},
