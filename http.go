@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"runtime"
-	"strconv"
 	"strings"
 )
 
@@ -14,6 +13,9 @@ const (
 
 	// User agent in format: GottWall-Stati/0.1.0(linux, go/version, public_key)
 	USER_AGENT_TEMPLATE string = "GottWall-Stati/%s(%s; %s; %s/%s; %s)"
+
+	// Setup default port for http backend
+	DEFAULT_HTTP_PORT int16 = 8890
 )
 
 type HTTPClient struct {
@@ -34,18 +36,9 @@ func HTTPClientInit(project string, private_key string, public_key string, host 
 	}
 
 	client := &HTTPClient{
-		Client: &Client{
-			Project:    project,
-			PrivateKey: private_key,
-			PublicKey:  public_key,
+		// Construct base client intance
+		Client: ClientInit(project, private_key, public_key, host, port),
 
-			Host: host,
-			Port: port,
-
-			SoltBase: DEFAULT_SOLT_BASE,
-
-			Addr: strings.Join([]string{host, strconv.FormatInt(int64(port), 10)}, ":"),
-		},
 		Prefix:        prefix,
 		Proto:         proto,
 		RequestClient: &http.Client{},

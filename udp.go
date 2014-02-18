@@ -2,7 +2,6 @@ package stati_net
 
 import (
 	"net"
-	"strconv"
 	"strings"
 )
 
@@ -13,10 +12,13 @@ const (
 
 	// Metric data part separator
 	DEFAULT_UDP_CHUNK_DELIMITER = "--chunk--"
+
+	// Setup default udp client port
+	DEFAULT_UDP_PORT int16 = 8897
 )
 
 type UDPClient struct {
-	Client         // Base client structure
+	*Client        // Base client structure
 	AuthDelimiter  string
 	ChunkDelimiter string
 }
@@ -26,31 +28,12 @@ type UDPClient struct {
 func UDPClientInit(project string, private_key, public_key string, host string, port int16, auth_delimiter string, chunk_delimiter string) *UDPClient {
 
 	client := &UDPClient{
-		Client: Client{
-			Project:    project,
-			PrivateKey: private_key,
-			PublicKey:  public_key,
+		Client: ClientInit(project, private_key, public_key, host, port),
 
-			Host: host,
-			Port: port,
-			Addr: strings.Join([]string{host, strconv.FormatInt(int64(port), 10)}, ":"),
-
-			SoltBase: DEFAULT_SOLT_BASE,
-		},
 		AuthDelimiter:  auth_delimiter,
 		ChunkDelimiter: chunk_delimiter,
 	}
 	return client
-}
-
-func (c *UDPClient) MakeMessage(action string, name string, value float64, timestamp int64, filters map[string]interface{}) *Message {
-	return &Message{
-		Action:    action,
-		Name:      name,
-		Project:   c.Project,
-		Timestamp: timestamp,
-		Value:     value,
-	}
 }
 
 func (c *UDPClient) MakePacket(message *Message) string {
@@ -60,7 +43,8 @@ func (c *UDPClient) MakePacket(message *Message) string {
 		return ""
 	}
 
-	return strings.Join([]string{c.GetAuthHeader(), c.AuthDelimiter, string(*serialized_message), c.ChunkDelimiter}, "")
+	return strings.Join([]string{c.GetAuthHeader(), c.AuthDelimiter,
+		string(*serialized_message), c.ChunkDelimiter}, "")
 }
 
 func (c *UDPClient) Incr(name string, value float64, timestamp int64, filters map[string]interface{}) bool {
@@ -92,8 +76,10 @@ func (c *UDPClient) Request(packet string) bool {
 	ra, err := c.GetAddr()
 
 	_, err = conn.(*net.UDPConn).WriteToUDP([]byte(packet), ra)
+
 	if err != nil {
 		return false
 	}
+
 	return true
 }
