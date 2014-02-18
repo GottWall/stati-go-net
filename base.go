@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/Lispython/go-semver"
+	"strconv"
+	"strings"
 	"time"
 )
 
@@ -59,7 +61,6 @@ func (c *Client) SetSoltBase(base int) int {
 func (c *Client) GetAuthHeader() string {
 
 	var timestamp int64 = time.Now().UTC().Unix()
-
 	return MakeAuthHeader(timestamp, c.GetSign(timestamp), c.GetProjectHash(), c.SoltBase)
 }
 
@@ -78,4 +79,30 @@ func (c *Client) SerializeMessage(message *Message) (*[]byte, error) {
 // Get current time as seconds int UTC
 func (c *Client) CurrentTS() int64 {
 	return time.Now().UTC().Unix()
+}
+
+func (c *Client) MakeMessage(action string, name string, value float64, timestamp int64, filters map[string]interface{}) *Message {
+	return &Message{
+		Action:    action,
+		Name:      name,
+		Project:   c.Project,
+		Timestamp: timestamp,
+		Value:     value,
+	}
+}
+
+// Make instance on Client structure and return pointer to its
+func ClientInit(project string, private_key string, public_key string, host string, port int16) *Client {
+
+	return &Client{
+		Project:    project,
+		PrivateKey: private_key,
+		PublicKey:  public_key,
+
+		Host: host,
+		Port: port,
+		Addr: strings.Join([]string{host, strconv.FormatInt(int64(port), 10)}, ":"),
+
+		SoltBase: DEFAULT_SOLT_BASE,
+	}
 }
